@@ -35,6 +35,7 @@ class NavBar extends Component {
   render() {
     const { auth } = this.props;
     const authenticated = auth.authenticated;
+    
     return (
       <Menu inverted fixed="top">
         <Container>
@@ -59,7 +60,7 @@ class NavBar extends Component {
             />
           </Menu.Item>}
           {authenticated ? (
-            <SignedInMenu currentUser={auth.currentUser} signOut={this.handleSignOut} />
+            <SignedInMenu currentuser={auth.currentUser} signOut={this.handleSignOut} /> 
           ) : (
             <SignedOutMenu signIn={this.handleSignIn} register={this.handleRegister} />
           )}

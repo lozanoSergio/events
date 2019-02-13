@@ -3,7 +3,6 @@ import { Menu, Image, Dropdown } from 'semantic-ui-react';
 import { Link } from 'react-router-dom'
 
 const SignedInMenu = ({signOut, currentuser}) => {
-  console.log(currentuser)
   return (
     <Menu.Item position="right">
       <Image avatar spaced="right" src="/assets/images/user.png" />
