@@ -16,7 +16,7 @@ class RegisterModal extends Component {
                 onClose={this.props.closeModal}
             >
                 <Modal.Header>
-                    Sign Up to League Champions Cards!
+                    Sign Up to Re-vents!
                 </Modal.Header>
                 <Modal.Content>
                     <Modal.Description>

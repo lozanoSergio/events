@@ -16,7 +16,7 @@ class LoginModal extends Component {
                 onClose={this.props.closeModal}
             >
                 <Modal.Header>
-                    Login to League Champions Cards
+                    Login to Re-vents
                 </Modal.Header>
                 <Modal.Content>
                     <Modal.Description>
