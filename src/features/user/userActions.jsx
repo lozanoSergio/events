@@ -95,9 +95,10 @@ export const setMainPhoto = photo => async (dispatch, getState, { getFirebase })
   }
 };
 
-export const goingToEvent = event => async (dispatch, getState, { getFirestore }) => {
+export const goingToEvent = event => async (dispatch, getState, { getFirestore, getFirebase }) => {
   const firestore = getFirestore();
-  const user = firestore.auth().currentUser;
+  const firebase = getFirebase();
+  const user = firebase.auth().currentUser;
   const photoURL = getState().firebase.profile.photoURL;
   const attendee = {
     going: true,
@@ -123,9 +124,10 @@ export const goingToEvent = event => async (dispatch, getState, { getFirestore }
   }
 };
 
-export const cancelGoingToEvent = event => async (dispatch, getState, { getFirestore }) => {
+export const cancelGoingToEvent = event => async (dispatch, getState, { getFirestore, getFirebase }) => {
   const firestore = getFirestore();
-  const user = firestore.auth().currentUser;
+  const firebase = getFirebase();
+  const user = firebase.auth().currentUser;
   try {
     await firestore.update(`events/${event.id}`, {
       [`attendees.${user.uid}`]: firestore.FieldValue.delete()
@@ -183,3 +185,39 @@ export const getUserEvents = (userUid, activeTab) => async (dispatch, getState) 
     dispatch(asyncActionError());
   }
 };
+
+export const followUser = userToFollow => async (dispatch, getState, { getFirestore, getFirebase }) => {
+  const firestore = getFirestore();
+  const firebase = getFirebase();
+  const user = firebase.auth().currentUser;
+  const following = {
+    photoURL: userToFollow.photoURL || 'assets/user.png',
+    city: userToFollow.city || 'Unknown City',
+    displayName: userToFollow.displayName
+  }
+  try {
+    await firestore.set({
+      collection: 'users',
+      doc: user.uid,
+      subcollections: [{ collection: 'following', doc: userToFollow.id }]
+    }, following)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const unfollowUser = (userToUnfollow) =>
+  async (dispatch, getState, {getFirestore, getFirebase}) => {
+    const firestore = getFirestore();
+    const firebase = getFirebase();
+    const user = firebase.auth().currentUser;
+    try {
+      await firestore.delete({
+        collection: 'users',
+        doc: user.uid,
+        subcollections: [{collection: 'following', doc: userToUnfollow.id}]
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
