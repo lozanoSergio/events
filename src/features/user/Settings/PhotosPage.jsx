@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { firestoreConnect } from 'react-redux-firebase';
-import { compose } from 'redux';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { firestoreConnect } from "react-redux-firebase";
+import { compose } from "redux";
 import {
   Image,
   Segment,
@@ -11,22 +11,43 @@ import {
   Button,
   Card,
   Icon
-} from 'semantic-ui-react';
-import { toastr } from 'react-redux-toastr';
-import Dropzone from 'react-dropzone';
-import Cropper from 'react-cropper';
-import 'cropperjs/dist/cropper.css';
-import { uploadProfileImage, deletePhoto, setMainPhoto } from '../userActions';
+} from "semantic-ui-react";
+import { toastr } from "react-redux-toastr";
+import Dropzone from "react-dropzone";
+import Cropper from "react-cropper";
+import "cropperjs/dist/cropper.css";
+import { uploadProfileImage, deletePhoto, setMainPhoto } from "../userActions";
 
 const query = ({ auth }) => {
   return [
     {
-      collection: 'users',
+      collection: "users",
       doc: auth.uid,
-      subcollections: [{ collection: 'photos' }],
-      storeAs: 'photos'
+      subcollections: [{ collection: "photos" }],
+      storeAs: "photos"
     }
   ];
+};
+
+const baseStyle = {
+  width: 200,
+  height: 200,
+  borderWidth: 2,
+  borderColor: "#666",
+  borderStyle: "dashed",
+  borderRadius: 5,
+  paddingTop: 30,
+  textAlign: 'center'
+};
+const activeStyle = {
+  borderStyle: "solid",
+  borderColor: "#6c6",
+  backgroundColor: "#eee"
+};
+const rejectStyle = {
+  borderStyle: "solid",
+  borderColor: "#c66",
+  backgroundColor: "#eee"
 };
 
 const actions = {
@@ -45,7 +66,7 @@ const mapState = state => ({
 class PhotosPage extends Component {
   state = {
     files: [],
-    fileName: '',
+    fileName: "",
     cropResult: null,
     image: {}
   };
@@ -64,30 +85,30 @@ class PhotosPage extends Component {
         this.state.fileName
       );
       this.cancelCrop();
-      toastr.success('Success', 'Photo has been uploaded');
+      toastr.success("Success", "Photo has been uploaded");
     } catch (error) {
-      toastr.error('Oops', error.message);
+      toastr.error("Oops", error.message);
     }
   };
 
-  handlePhotoDelete = (photo) => async () => {
+  handlePhotoDelete = photo => async () => {
     try {
       this.props.deletePhoto(photo);
     } catch (error) {
-      toastr.error('Oops', error.message)
+      toastr.error("Oops", error.message);
     }
-  }
+  };
 
-  handleSetMainPhoto = (photo) => async () => {
+  handleSetMainPhoto = photo => async () => {
     try {
-      this.props.setMainPhoto(photo)
+      this.props.setMainPhoto(photo);
     } catch (error) {
-      toastr.error('Oops', error.message)
+      toastr.error("Oops", error.message);
     }
-  }
+  };
 
   cropImage = () => {
-    if (typeof this.refs.cropper.getCroppedCanvas() === 'undefined') {
+    if (typeof this.refs.cropper.getCroppedCanvas() === "undefined") {
       return;
     }
 
@@ -97,7 +118,7 @@ class PhotosPage extends Component {
         cropResult: imageUrl,
         image: blob
       });
-    }, 'image/jpeg');
+    }, "image/jpeg");
   };
 
   onDrop = files => {
@@ -112,8 +133,8 @@ class PhotosPage extends Component {
     let filteredPhotos;
     if (photos) {
       filteredPhotos = photos.filter(photo => {
-        return photo.url !== profile.photoURL
-      })
+        return photo.url !== profile.photoURL;
+      });
     }
     return (
       <Segment>
@@ -122,11 +143,28 @@ class PhotosPage extends Component {
           <Grid.Row />
           <Grid.Column width={4}>
             <Header color="teal" sub content="Step 1 - Add Photo" />
-            <Dropzone onDrop={this.onDrop} multiple={false}>
-              <div style={{ paddingTop: '30px', textAlign: 'center' }}>
-                <Icon name="upload" size="huge" />
-                <Header content="Drop image here or click to upload" />
-              </div>
+
+            <Dropzone onDrop={this.onDrop} multiple={false} accept="image/*">
+              {({
+                getRootProps,
+                getInputProps,
+                isDragActive,
+                isDragAccept,
+                isDragReject,
+                acceptedFiles,
+                rejectedFiles
+              }) => {
+                let styles = { ...baseStyle };
+                styles = isDragActive ? { ...styles, ...activeStyle } : styles;
+                styles = isDragReject ? { ...styles, ...rejectStyle } : styles;
+
+                return (
+                  <div style={styles}>
+                    <Icon name="upload" size="huge" />
+                    <Header content="Drop image here or click to upload" />
+                  </div>
+                );
+              }}
             </Dropzone>
           </Grid.Column>
           <Grid.Column width={1} />
@@ -134,7 +172,7 @@ class PhotosPage extends Component {
             <Header sub color="teal" content="Step 2 - Resize image" />
             {this.state.files[0] && (
               <Cropper
-                style={{ height: 200, width: '100%' }}
+                style={{ height: 200, width: "100%" }}
                 ref="cropper"
                 src={this.state.files[0].preview}
                 aspectRatio={1}
@@ -154,21 +192,21 @@ class PhotosPage extends Component {
             {this.state.files[0] && (
               <div>
                 <Image
-                  style={{ minHeight: '200px', minWidth: '200px' }}
+                  style={{ minHeight: "200px", minWidth: "200px" }}
                   src={this.state.cropResult}
                 />
                 <Button.Group>
                   <Button
                     loading={loading}
                     onClick={this.uploadImage}
-                    style={{ width: '100px' }}
+                    style={{ width: "100px" }}
                     positive
                     icon="check"
                   />
                   <Button
                     disabled={loading}
                     onClick={this.cancelCrop}
-                    style={{ width: '100px' }}
+                    style={{ width: "100px" }}
                     icon="close"
                   />
                 </Button.Group>
@@ -182,7 +220,7 @@ class PhotosPage extends Component {
 
         <Card.Group itemsPerRow={5}>
           <Card>
-            <Image src={profile.photoURL || '/assets/user.png'} />
+            <Image src={profile.photoURL || "/assets/user.png"} />
             <Button positive>Main Photo</Button>
           </Card>
           {photos &&
@@ -190,10 +228,21 @@ class PhotosPage extends Component {
               <Card key={photo.id}>
                 <Image src={photo.url} />
                 <div className="ui two buttons">
-                  <Button onClick={this.handleSetMainPhoto(photo)} basic color="green">
+                  <Button
+                    loading={loading}
+                    onClick={this.handleSetMainPhoto(photo)}
+                    basic
+                    color="green"
+                  >
                     Main
                   </Button>
-                  <Button onClick={this.handlePhotoDelete(photo)} basic icon="trash" color="red" />
+                  <Button
+                    loading={loading}
+                    onClick={this.handlePhotoDelete(photo)}
+                    basic
+                    icon="trash"
+                    color="red"
+                  />
                 </div>
               </Card>
             ))}
@@ -204,6 +253,9 @@ class PhotosPage extends Component {
 }
 
 export default compose(
-  connect(mapState, actions),
+  connect(
+    mapState,
+    actions
+  ),
   firestoreConnect(auth => query(auth))
 )(PhotosPage);
