@@ -93,7 +93,7 @@ class PhotosPage extends Component {
 
   handlePhotoDelete = photo => async () => {
     try {
-      this.props.deletePhoto(photo);
+      await this.props.deletePhoto(photo);
     } catch (error) {
       toastr.error("Oops", error.message);
     }
@@ -101,7 +101,7 @@ class PhotosPage extends Component {
 
   handleSetMainPhoto = photo => async () => {
     try {
-      this.props.setMainPhoto(photo);
+      await this.props.setMainPhoto(photo);
     } catch (error) {
       toastr.error("Oops", error.message);
     }
@@ -159,7 +159,8 @@ class PhotosPage extends Component {
                 styles = isDragReject ? { ...styles, ...rejectStyle } : styles;
 
                 return (
-                  <div style={styles}>
+                  <div style={styles} {...getRootProps()}>
+                    <input {...getInputProps()} />
                     <Icon name="upload" size="huge" />
                     <Header content="Drop image here or click to upload" />
                   </div>
